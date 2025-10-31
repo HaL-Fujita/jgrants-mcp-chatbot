@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "jgrants": {
+      "command": "/usr/local/bin/python3.11",
+      "args": [
+        "/Users/apple/jgrants-mcp-chatbot/jgrants_server.py"
+      ]
+    }
+  }
+}
