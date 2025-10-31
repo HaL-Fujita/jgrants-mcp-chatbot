@@ -10,11 +10,11 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # requirements.txtをコピーして依存関係をインストール
-COPY requirements.txt .
+COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# アプリケーションコードをコピー
-COPY . .
+# アプリケーションコードをコピー（backendディレクトリの中身のみ）
+COPY backend/ .
 
 # ポートを公開
 EXPOSE 8000
