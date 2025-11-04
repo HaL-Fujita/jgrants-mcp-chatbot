@@ -23,7 +23,13 @@ app = FastAPI(
 
 # CORS設定（フロントエンドからのアクセスを許可）
 # 環境変数からフロントエンドURLを取得（本番環境対応）
-allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:3001").split(",")
+allowed_origins_str = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:3001")
+
+# "*" を許可する場合は全てのオリジンを許可
+if allowed_origins_str == "*":
+    allowed_origins = ["*"]
+else:
+    allowed_origins = [origin.strip() for origin in allowed_origins_str.split(",")]
 
 app.add_middleware(
     CORSMiddleware,

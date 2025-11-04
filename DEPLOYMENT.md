@@ -102,9 +102,11 @@ https://vercel.com/dashboard
 ### 3-3. 環境変数を設定
 「Environment Variables」セクションで以下を追加：
 
-| Name | Value |
-|------|-------|
-| `NEXT_PUBLIC_API_URL` | RenderのバックエンドURL（例: `https://jgrants-backend-xxxx.onrender.com`） |
+| Name | Value | 説明 |
+|------|-------|------|
+| `NEXT_PUBLIC_API_URL` | RenderのバックエンドURL（例: `https://jgrants-backend-xxxx.onrender.com`） | **必須**: バックエンドAPIのURL |
+
+**重要**: この環境変数を設定しないと、フロントエンドはlocalhostへアクセスしようとしてエラーになります。
 
 ### 3-4. デプロイ開始
 - **「Deploy」** ボタンをクリック
@@ -143,9 +145,28 @@ https://vercel.com/dashboard
 - Dockerビルドが成功しているか確認
 
 ### フロントエンドでAPIエラーが出る場合
-- VercelのEnvironment Variablesで `NEXT_PUBLIC_API_URL` が正しいか確認
-- RenderのバックエンドURLに `/api/health` をつけてアクセスして動作確認
-- ブラウザの開発者ツール（F12）でCORSエラーがないか確認
+
+#### 1. 環境変数が設定されているか確認
+Vercelダッシュボード → プロジェクト → Settings → Environment Variables で以下を確認:
+- `NEXT_PUBLIC_API_URL` が設定されているか
+- 値が正しいバックエンドURL（例: `https://jgrants-backend-xxxx.onrender.com`）か
+
+#### 2. 環境変数変更後は再デプロイが必要
+環境変数を追加・変更した場合:
+1. Deployments タブへ移動
+2. 最新のデプロイメントの「...」メニューから「Redeploy」を選択
+
+#### 3. バックエンドの動作確認
+- RenderのバックエンドURLに `/api/health` をつけてアクセス
+- 例: `https://jgrants-backend-xxxx.onrender.com/api/health`
+- `{"status":"healthy","api_keys":{...}}` が返ってくればOK
+
+#### 4. CORSエラーの確認
+- ブラウザの開発者ツール（F12）でConsoleタブを開く
+- `Access-Control-Allow-Origin` エラーが出ている場合:
+  - Renderのバックエンドで `ALLOWED_ORIGINS` 環境変数を確認
+  - VercelのフロントエンドURL（例: `https://your-app.vercel.app`）が含まれているか確認
+  - または `ALLOWED_ORIGINS` を `*` に設定（開発時のみ推奨）
 
 ### Renderの無料プランの制限
 - **15分間アクセスがないとスリープ**
@@ -194,3 +215,50 @@ git push origin main
 
 - **Vercel**: 自動デプロイ（約1-2分）
 - **Render**: 自動デプロイ（約3-5分）
+
+---
+
+## 🚨 Vercelデプロイエラー対処法
+
+### エラー: "API connection failed" / "localhost:8000" にアクセスしようとする
+
+**原因**: `NEXT_PUBLIC_API_URL` 環境変数が未設定
+
+**解決方法**:
+1. Vercelダッシュボードを開く: https://vercel.com/dashboard
+2. プロジェクトを選択
+3. **Settings** → **Environment Variables** へ移動
+4. 以下を追加:
+   - **Name**: `NEXT_PUBLIC_API_URL`
+   - **Value**: `https://jgrants-backend-xxxx.onrender.com`（あなたのRender URL）
+   - **Target**: Production, Preview, Development すべて選択
+5. **Save** をクリック
+6. **Deployments** タブへ移動
+7. 最新デプロイメントを **Redeploy** する
+
+### エラー: "CORS policy" / "Access-Control-Allow-Origin"
+
+**原因**: バックエンドがVercelからのアクセスを許可していない
+
+**解決方法**:
+1. Renderダッシュボードを開く: https://dashboard.render.com/
+2. バックエンドサービスを選択
+3. **Environment** タブへ移動
+4. `ALLOWED_ORIGINS` を追加/更新:
+   - **Key**: `ALLOWED_ORIGINS`
+   - **Value**: `https://your-app.vercel.app` または `*`（開発時）
+5. **Save Changes** をクリック（自動的に再デプロイされる）
+
+### デプロイIDが表示される場合の確認方法
+
+デプロイID（例: `hnd1::bzd2c-...`）が表示された場合:
+
+1. Vercelダッシュボードで **Deployments** タブを開く
+2. 該当するデプロイメントをクリック
+3. **Build Logs** でエラー内容を確認
+4. **Function Logs** でランタイムエラーを確認
+
+よくある問題:
+- ビルドは成功するがランタイムで動作しない → 環境変数が未設定
+- CORS エラー → バックエンドの `ALLOWED_ORIGINS` を確認
+- 502 Bad Gateway → バックエンドがスリープ中（Renderの無料プラン）または起動失敗
