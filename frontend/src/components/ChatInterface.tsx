@@ -164,26 +164,20 @@ export default function ChatInterface() {
 
       {/* チャットエリア */}
       <div className="flex-1 overflow-hidden">
-        <div className={`grid ${visibleModelsCount === 2 ? 'grid-cols-2' : 'grid-cols-1'} gap-4 h-full p-4`}>
+        <div className={`grid ${visibleModelsCount === 2 ? 'grid-cols-2' : 'grid-cols-1'} gap-6 h-full p-6`}>
           {/* Claude チャット */}
           {modelVisibility.claude && (
             <div className="flex flex-col bg-white rounded-lg shadow-md overflow-hidden">
               <div className="bg-[#D97757] text-white px-4 py-3 font-bold">
                 Claude
               </div>
-              <div className="flex-1 overflow-y-auto p-4">
-                {claudeMessages.length === 0 && (
-                  <div className="text-center text-gray-400 mt-8">
-                    <p>補助金について質問してください</p>
-                    <p className="text-sm mt-2">例: 東京都で募集中のIT関連補助金を教えて</p>
-                  </div>
-                )}
+              <div className="flex-1 overflow-y-auto p-6">
                 {claudeMessages.map((msg, idx) => (
                   <ChatMessage key={idx} message={msg} model="claude" />
                 ))}
                 {isLoading && (
-                  <div className="flex justify-start mb-4">
-                    <div className="bg-gray-100 rounded-lg px-4 py-3 border border-gray-200">
+                  <div className="flex justify-start mb-3">
+                    <div className="bg-gray-100 rounded-2xl px-4 py-3 border border-gray-200">
                       <div className="flex items-center gap-2">
                         <div className="flex gap-1">
                           <div className="w-2 h-2 bg-[#D97757] rounded-full animate-bounce"></div>
@@ -206,19 +200,13 @@ export default function ChatInterface() {
               <div className="bg-[#10A37F] text-white px-4 py-3 font-bold">
                 ChatGPT
               </div>
-              <div className="flex-1 overflow-y-auto p-4">
-                {openaiMessages.length === 0 && (
-                  <div className="text-center text-gray-400 mt-8">
-                    <p>補助金について質問してください</p>
-                    <p className="text-sm mt-2">例: 大阪府で募集中の製造業向け補助金を探して</p>
-                  </div>
-                )}
+              <div className="flex-1 overflow-y-auto p-6">
                 {openaiMessages.map((msg, idx) => (
                   <ChatMessage key={idx} message={msg} model="openai" />
                 ))}
                 {isLoading && (
-                  <div className="flex justify-start mb-4">
-                    <div className="bg-gray-100 rounded-lg px-4 py-3 border border-gray-200">
+                  <div className="flex justify-start mb-3">
+                    <div className="bg-gray-100 rounded-2xl px-4 py-3 border border-gray-200">
                       <div className="flex items-center gap-2">
                         <div className="flex gap-1">
                           <div className="w-2 h-2 bg-[#10A37F] rounded-full animate-bounce"></div>
